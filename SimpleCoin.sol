@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.18; 
 
 contract SimpleCoin {
 
@@ -21,6 +21,7 @@ contract SimpleCoin {
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
     event OwnershipTransferred(address indexed _from, address indexed _to);
+    event OwnershipDeclined(address indexed _to);
 
     /*
     Constructor
@@ -123,7 +124,7 @@ contract SimpleCoin {
 
     // as the new potential owner, accept ownership
     function acceptOwnership() public returns (bool success) {
-        // ensure initiator is potential new owner
+        // ensure sender is potential new owner
         require(msg.sender == newOwner);
         // change owner to new owner
         owner = newOwner;
@@ -133,6 +134,18 @@ contract SimpleCoin {
         emit OwnershipTransferred(owner, newOwner);
         // success
         return true;
+    }
+
+    // as the new potential owner, decline ownership
+    function declineOwnership() public returns (bool success) {
+        // ensure sender is potential new owner
+        require(msg.sender == newOwner);
+         // set potential new owner to zero-account
+         newOwner = address(0);
+         // log ownership decline
+         emit OwnershipDeclined(newOwner);
+         // success
+         return true;
     }
 
 }
