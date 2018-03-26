@@ -22,6 +22,14 @@ Update __interact.js__ with your custom contract interactions and execute:
 truffle exec interact.js --network ganache
 ```
 
+## Testing
+
+To run tests as defined in __test/__:
+
+```
+truffle test
+```
+
 ## Author
 
 **Jack Leslie** - [jackjdl](https://github.com/jackjdl)
