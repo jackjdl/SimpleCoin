@@ -1,55 +1,35 @@
-pragma solidity ^0.4.18; 
+pragma solidity ^0.4.18;
+
 
 contract SimpleCoin {
 
-    /*
-    Contract variables
-    */
-
-    mapping(address => uint256) balances;
-    mapping (address => mapping (address => uint256)) allowed;
+    mapping(address => uint256) private balances;
+    mapping (address => mapping (address => uint256)) private allowed;
     string public name;
     string public symbol;
     uint public totalSupply;
     address public owner;
     address public newOwner;
 
-    /*
-    Events
-    */
+    event LogTransfer(address indexed _from, address indexed _to, uint256 _value);
+    event LogApproval(address indexed _owner, address indexed _spender, uint256 _value);
+    event LogOwnershipTransferred(address indexed _from, address indexed _to);
+    event LogOwnershipDeclined(address indexed _to);
 
-    event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-    event OwnershipTransferred(address indexed _from, address indexed _to);
-    event OwnershipDeclined(address indexed _to);
-
-    /*
-    Constructor
-    */
-
-    // create token and give total supply to sender
     function SimpleCoin() public {
         name = "Simple Coin";
         symbol = "XSC";
         totalSupply = 1000000;
         owner = msg.sender;
         balances[owner] = totalSupply;
-        emit Transfer(address(0), owner, totalSupply);
+        LogTransfer(address(0), owner, totalSupply);
     }
-
-    /*
-    Modifier
-    */
 
     // ensure the sender is the owner
     modifier onlyOwner() {
         require(msg.sender == owner);
         _;
     }
-
-    /*
-    Getters
-    */
 
     // getter for balance of specified owner
     function balanceOf(address _owner) public view returns (uint256 balance) {
@@ -66,10 +46,6 @@ contract SimpleCoin {
         return totalSupply - balances[address(0)];
     }
 
-    /*
-    Value transfer logic
-    */
-
     // transfer value from sender to specified address
     function transfer(address _to, uint256 _value) public returns (bool success) {
         // ensure the sender has enough coins
@@ -79,7 +55,7 @@ contract SimpleCoin {
         // increase receivers balance by value
         balances[_to] += _value;
         // log transfer of value
-        emit Transfer(msg.sender, _to, _value);
+        LogTransfer(msg.sender, _to, _value);
         // success
         return true;
     }
@@ -97,7 +73,7 @@ contract SimpleCoin {
         // decrease allowance by value
         allowed[_from][msg.sender] -= _value;
         // log transfer of value
-        emit Transfer(_from, _to, _value);
+        LogTransfer(_from, _to, _value);
         // success
         return true;
     }
@@ -107,14 +83,10 @@ contract SimpleCoin {
         // set allowance value
         allowed[msg.sender][_spender] = _value;
         // log approval
-        emit Approval(msg.sender, _spender, _value);
+        LogApproval(msg.sender, _spender, _value);
         // success
         return true;
     }
-
-    /*
-    Ownership logic
-    */
 
     // essentially send request to potential new owner for them to accept
     function transferOwnership(address _newOwner) public onlyOwner {
@@ -131,7 +103,7 @@ contract SimpleCoin {
         // set next potential new owner to zero-account
         newOwner = address(0);
         // log ownership transfer
-        emit OwnershipTransferred(owner, newOwner);
+        LogOwnershipTransferred(owner, newOwner);
         // success
         return true;
     }
@@ -140,12 +112,12 @@ contract SimpleCoin {
     function declineOwnership() public returns (bool success) {
         // ensure sender is potential new owner
         require(msg.sender == newOwner);
-         // set potential new owner to zero-account
-         newOwner = address(0);
-         // log ownership decline
-         emit OwnershipDeclined(newOwner);
-         // success
-         return true;
+        // set potential new owner to zero-account
+        newOwner = address(0);
+        // log ownership decline
+        LogOwnershipDeclined(newOwner);
+        // success
+        return true;
     }
 
 }
