@@ -41,8 +41,8 @@ contract SimpleCoin {
         return allowed[_owner][_spender];
     }
 
-    // getter for total supply, needs to be defined as is constant
-    function totalSupply() public constant returns (uint) {
+    // getter for total supply, deduct any zero-account balance
+    function totalSupply() public view returns (uint) {
         return totalSupply - balances[address(0)];
     }
 
