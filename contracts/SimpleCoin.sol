@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.4.21;
 
 
 contract SimpleCoin {
@@ -22,7 +22,7 @@ contract SimpleCoin {
         totalSupply = 1000000;
         owner = msg.sender;
         balances[owner] = totalSupply;
-        LogTransfer(address(0), owner, totalSupply);
+        emit LogTransfer(address(0), owner, totalSupply);
     }
 
     // ensure the sender is the owner
@@ -55,7 +55,7 @@ contract SimpleCoin {
         // increase receivers balance by value
         balances[_to] += _value;
         // log transfer of value
-        LogTransfer(msg.sender, _to, _value);
+        emit LogTransfer(msg.sender, _to, _value);
         // success
         return true;
     }
@@ -73,7 +73,7 @@ contract SimpleCoin {
         // decrease allowance by value
         allowed[_from][msg.sender] -= _value;
         // log transfer of value
-        LogTransfer(_from, _to, _value);
+        emit LogTransfer(_from, _to, _value);
         // success
         return true;
     }
@@ -83,7 +83,7 @@ contract SimpleCoin {
         // set allowance value
         allowed[msg.sender][_spender] = _value;
         // log approval
-        LogApproval(msg.sender, _spender, _value);
+        emit LogApproval(msg.sender, _spender, _value);
         // success
         return true;
     }
@@ -103,7 +103,7 @@ contract SimpleCoin {
         // set next potential new owner to zero-account
         newOwner = address(0);
         // log ownership transfer
-        LogOwnershipTransferred(owner, newOwner);
+        emit LogOwnershipTransferred(owner, newOwner);
         // success
         return true;
     }
@@ -115,7 +115,7 @@ contract SimpleCoin {
         // set potential new owner to zero-account
         newOwner = address(0);
         // log ownership decline
-        LogOwnershipDeclined(newOwner);
+        emit LogOwnershipDeclined(newOwner);
         // success
         return true;
     }
